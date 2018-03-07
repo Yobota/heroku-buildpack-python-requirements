@@ -2,6 +2,9 @@
 
 pipeline {
     agent any
+    environment {
+        HEROKU_API_KEY = 'THIS STRING IS NOT AN API KEY'
+    }
     stages {
         stage('test') {
             steps {
