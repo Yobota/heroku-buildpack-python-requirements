@@ -1,4 +1,7 @@
+#!/usr/bin/env bash
+
 echo "heroku-buildpack-python-requirements"
+
 HEROKU_API_URL="https://api.heroku.com/"
 HEROKU_VERSION_HEADER="Accept: application/vnd.heroku+json; version=3"
 
@@ -11,13 +14,15 @@ else
     exit 1
 fi
 
-
 # check can access a Heroku API endpoint
 
 APPS_URL="${HEROKU_API_URL}apps"
-GET_APPS_STATUS="curl -s -o /dev/null -w %{http_code} $APPS_URL"
-response=$($GET_APPS_STATUS)
+call_apps() {
+    curl -s -o /dev/null -w %{http_code} \
+        -H "$HEROKU_VERSION_HEADER" $APPS_URL
+}
 
+response=$(call_apps)
 if [ $response -eq 200 ]; then
     echo "GET $APPS_URL success"
 else
