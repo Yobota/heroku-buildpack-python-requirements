@@ -1,25 +1,32 @@
 #!/usr/bin/env bash
 
-echo "heroku-buildpack-python-requirements"
+echo "Testing heroku-buildpack-python-requirements"
 
-HEROKU_API_URL="https://api.heroku.com/"
-HEROKU_VERSION_HEADER="Accept: application/vnd.heroku+json; version=3"
+echo
+echo - Checking for Heroku OAuth access token
 
-# check a Heroku API key is available
-
-if [ -n "$HEROKU_API_KEY" ]; then
-    echo "Heroku API key found"
+if [ -n "$HEROKU_TOKEN" ]; then
+    echo "Heroku OAuth access token found"
 else
-    echo "Heroku API key not set"
+    echo "Heroku OAuth access token missing"
+    echo "Check value of HEROKU_TOKEN"
     exit 1
 fi
 
-# check can access a Heroku API endpoint
+echo
+echo - check can access a Heroku API endpoint
 
-APPS_URL="${HEROKU_API_URL}apps"
+HEROKU_URL="https://api.heroku.com/"
+HEROKU_VERSION_HEADER="Accept: application/vnd.heroku+json; version=3"
+HEROKU_AUTH_HEADER="Authorization: Bearer $HEROKU_TOKEN"
+APPS_URL="${HEROKU_URL}apps/"
 call_apps() {
-    curl -s -o /dev/null -w %{http_code} \
-        -H "$HEROKU_VERSION_HEADER" $APPS_URL
+    curl -s -I \
+        -o /dev/null \
+        -w %{http_code} \
+        -H "$HEROKU_VERSION_HEADER" \
+        -H "$HEROKU_AUTH_HEADER" \
+        $APPS_URL
 }
 
 response=$(call_apps)
