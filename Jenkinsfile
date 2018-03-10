@@ -3,7 +3,7 @@
 pipeline {
     agent any
     environment {
-        HEROKU_TOKEN = 'THIS STRING IS NOT AN API KEY'
+        HEROKU_TOKEN = credentials('HEROKU_TOKEN')
     }
     stages {
         stage('test') {
