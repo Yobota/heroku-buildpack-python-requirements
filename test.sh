@@ -1,38 +1,48 @@
 #!/usr/bin/env bash
 
-echo "Testing heroku-buildpack-python-requirements"
+source heroku.sh
 
-echo
-echo - Checking for Heroku OAuth access token
+#echo "Testing heroku-buildpack-python-requirements"
 
-if [ -n "$HEROKU_TOKEN" ]; then
-    echo "Heroku OAuth access token found"
-else
-    echo "Heroku OAuth access token missing"
-    echo "Check value of HEROKU_TOKEN"
-    exit 1
-fi
+HEROKU_APP="heroku-buildpack-python-requirements"
 
-echo
-echo - check can access a Heroku API endpoint
-
-HEROKU_URL="https://api.heroku.com/"
-HEROKU_VERSION_HEADER="Accept: application/vnd.heroku+json; version=3"
-HEROKU_AUTH_HEADER="Authorization: Bearer $HEROKU_TOKEN"
-APPS_URL="${HEROKU_URL}apps/"
-call_apps() {
-    curl -s -I \
-        -o /dev/null \
-        -w %{http_code} \
-        -H "$HEROKU_VERSION_HEADER" \
-        -H "$HEROKU_AUTH_HEADER" \
-        $APPS_URL
+test_heroku_token() {
+    echo - Checking for Heroku OAuth access token
+    if [ -n "$HEROKU_TOKEN" ]; then
+        echo "Heroku OAuth access token found"
+    else
+        echo "Heroku OAuth access token missing"
+        echo "Check value of HEROKU_TOKEN"
+        exit 1
+    fi
 }
 
-response=$(call_apps)
-if [ $response -eq 200 ]; then
-    echo "GET $APPS_URL success"
-else
-    echo "GET $APPS_URL $response"
-    exit 1
-fi
+test_heroku_api_connection() {
+    echo - check can access a Heroku API endpoint
+    local endpoin="apps"
+
+    response=$(heroku-api $endpoint GET STATUS)
+    if [ $response -eq 200 ]; then
+        echo "GET $endpoint success"
+    else
+        echo "GET $endpoint $response"
+        exit 1
+    fi
+}
+
+test_heroku_build_app_exists() {
+    echo - check the app $HEROKU_APP exists
+
+    local endpoint="apps/$HEROKU_APP"
+    response=$(heroku-api $endpoint GET STATUS)
+    if [ $response -eq 200 ]; then
+        echo "GET $endpoint success"
+    else
+        echo "GET $endpoint $response"
+        exit 1
+    fi
+}
+
+#test_heroku_token
+#test_heroku_api_connection
+test_heroku_build_app_exists
