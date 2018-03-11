@@ -19,7 +19,7 @@ test_heroku_token() {
 
 test_heroku_api_connection() {
     echo - check can access a Heroku API endpoint
-    local endpoin="apps"
+    local endpoint="apps"
 
     response=$(heroku-api $endpoint GET STATUS)
     if [ $response -eq 200 ]; then
@@ -43,6 +43,6 @@ test_heroku_build_app_exists() {
     fi
 }
 
-#test_heroku_token
-#test_heroku_api_connection
+test_heroku_token
+test_heroku_api_connection
 test_heroku_build_app_exists
