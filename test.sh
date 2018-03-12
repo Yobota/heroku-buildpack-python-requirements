@@ -60,4 +60,8 @@ test_jq_available() {
 test_jq_available
 test_heroku_token
 test_heroku_api_connection
-test_heroku_build_app_exists
+#test_heroku_build_app_exists
+
+data='{"name": "heroku-buildpack-python-requirements"}'
+echo $data 
+heroku-api apps/$HEROKU_APP GET JSON .
