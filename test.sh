@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+
 source heroku.sh
 
 #echo "Testing heroku-buildpack-python-requirements"
@@ -43,6 +44,21 @@ test_heroku_build_app_exists() {
     fi
 }
 
+test_jq_available() {
+    echo - check jq is available as a dependency for the current architecture
+    #echo $(getconf LONG_BIT)
+
+    which jq
+    local exit_status=$?
+    if [ $exit_status -eq 0 ]; then
+        echo jq found and executable
+    else
+        echo jq either nonexistent or not executable
+        exit 1
+    fi
+}
+
 test_heroku_token
 test_heroku_api_connection
+test_jq_available
 test_heroku_build_app_exists
