@@ -35,7 +35,7 @@ test_heroku_build_app_exists() {
     echo - check the app $HEROKU_APP exists
 
     local endpoint="apps/$HEROKU_APP"
-    response=$(heroku-api $endpoint GET STATUS)
+    local response=$(heroku-api $endpoint GET STATUS)
     if [ $response -eq 200 ]; then
         echo "GET $endpoint success"
     else
@@ -46,19 +46,18 @@ test_heroku_build_app_exists() {
 
 test_jq_available() {
     echo - check jq is available as a dependency for the current architecture
-    #echo $(getconf LONG_BIT)
 
-    which jq
+    local response=$(which jq)
     local exit_status=$?
     if [ $exit_status -eq 0 ]; then
-        echo jq found and executable
+        echo $response found and executable
     else
         echo jq either nonexistent or not executable
         exit 1
     fi
 }
 
+test_jq_available
 test_heroku_token
 test_heroku_api_connection
-test_jq_available
 test_heroku_build_app_exists
